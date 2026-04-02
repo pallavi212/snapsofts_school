@@ -1,0 +1,248 @@
+[
+  {
+    "id": 1,
+    "email": null,
+    "role": "Student",
+    "password": "123456"
+  },
+  {
+    "id": 4,
+    "email": "santosh.teacher@gmail.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 5,
+    "email": "aditi.admin@gmail.com",
+    "role": "Admin",
+    "password": "123456"
+  },
+  {
+    "id": 7,
+    "email": null,
+    "role": "Student",
+    "password": "changeme"
+  },
+  {
+    "id": 8,
+    "email": null,
+    "role": "Student",
+    "password": "changeme"
+  },
+  {
+    "id": 9,
+    "email": null,
+    "role": "Student",
+    "password": "changeme"
+  },
+  {
+    "id": 12,
+    "email": "jyo@principle.com",
+    "role": "Principal",
+    "password": "changeme"
+  },
+  {
+    "id": 13,
+    "email": null,
+    "role": "Student",
+    "password": "changeme"
+  },
+  {
+    "id": 14,
+    "email": "karishma@teacher.com",
+    "role": "Teacher",
+    "password": "changeme"
+  },
+  {
+    "id": 15,
+    "email": "pravin@teacher.com",
+    "role": "Teacher",
+    "password": "1"
+  },
+  {
+    "id": 16,
+    "email": null,
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 17,
+    "email": "haseena@teachar.com",
+    "role": "Teacher",
+    "password": "1"
+  },
+  {
+    "id": 18,
+    "email": "piyali@parent.com",
+    "role": "Parent",
+    "password": "piyali123"
+  },
+  {
+    "id": 21,
+    "email": null,
+    "role": "Parent",
+    "password": "1"
+  },
+  {
+    "id": 22,
+    "email": "stu010@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 25,
+    "email": "dhondiram@gmail.com",
+    "role": "Parent",
+    "password": "dhondiram123"
+  },
+  {
+    "id": 28,
+    "email": "huple@student",
+    "role": "Parent",
+    "password": "1"
+  },
+  {
+    "id": 29,
+    "email": "stu012@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 30,
+    "email": "sarojapanchal076@gmail.com",
+    "role": "Parent",
+    "password": "1"
+  },
+  {
+    "id": 31,
+    "email": "stu017@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 32,
+    "email": "shobha@gmail.com",
+    "role": "Parent",
+    "password": "1"
+  },
+  {
+    "id": 33,
+    "email": "stu018@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 34,
+    "email": "komal@gmail.com",
+    "role": "Parent",
+    "password": "1"
+  },
+  {
+    "id": 35,
+    "email": "stu019@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 36,
+    "email": "rohini@gmail.com",
+    "role": "Parent",
+    "password": "1"
+  },
+  {
+    "id": 37,
+    "email": "stu020@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 42,
+    "email": "uma@gmail.com",
+    "role": "Parent",
+    "password": "1"
+  },
+  {
+    "id": 43,
+    "email": "stu021@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 44,
+    "email": "stu022@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 45,
+    "email": "stu023@edusync.edu",
+    "role": "Student",
+    "password": "1"
+  },
+  {
+    "id": 46,
+    "email": "ankit@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 47,
+    "email": "tanvi@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 48,
+    "email": "ajay@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 49,
+    "email": "neha@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 50,
+    "email": "sakshi@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 51,
+    "email": "shravani@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 52,
+    "email": "jayshri@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 53,
+    "email": "virat@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 54,
+    "email": "mahi@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 55,
+    "email": "sanju@teacher.com",
+    "role": "Teacher",
+    "password": "123456"
+  },
+  {
+    "id": 56,
+    "email": "bhide@gmail.com",
+    "role": "Accountant",
+    "password": "Password123"
+  }
+]
