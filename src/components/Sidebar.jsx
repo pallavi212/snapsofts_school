@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, GraduationCap, ClipboardCheck,
   IndianRupee, Calendar, Settings, School, CalendarDays,
-  SlidersHorizontal, FileText, ClipboardList, X, Wallet
+  SlidersHorizontal, FileText, ClipboardList, X, Wallet, BookOpen, Activity
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -41,6 +41,7 @@ const Sidebar = ({ open, onClose }) => {
         { name: 'User Management', path: '/users', icon: <Settings size={20} /> },
         { name: 'Admissions', path: '/admissions', icon: <ClipboardList size={20} /> },
         { name: 'Letterhead', path: '/letterhead', icon: <FileText size={20} /> },
+        { name: 'Activity Log', path: '/activity-log', icon: <Activity size={20} /> },
         { name: 'Settings', path: '/settings', icon: <SlidersHorizontal size={20} /> }
       );
     }
@@ -48,7 +49,8 @@ const Sidebar = ({ open, onClose }) => {
     if (['Principal', 'Admin', 'Teacher'].includes(role)) {
       links.push(
         { name: 'Attendance', path: '/attendance', icon: <ClipboardCheck size={20} /> },
-        { name: 'Timetable', path: '/timetable', icon: <Calendar size={20} /> }
+        { name: 'Timetable', path: '/timetable', icon: <Calendar size={20} /> },
+        { name: 'Teaching Plans', path: '/teaching-plans', icon: <BookOpen size={20} /> }
       );
     }
 

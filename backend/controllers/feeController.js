@@ -1,4 +1,5 @@
 const FeeModel = require('../models/FeeModel');
+const { logActivity } = require('../middleware/activityLogger');
 
 const getFeeStructure = async (req, res) => {
     try {
@@ -19,6 +20,7 @@ const getPayments = async (req, res) => {
 const addPayment = async (req, res) => {
     try {
         await FeeModel.addPayment(req.body);
+        logActivity(req, { action: 'CREATE', module: 'Fees', details: `Fee payment ₹${req.body.amount_paid} recorded for student ${req.body.student_id}` });
         res.status(201).json({ message: 'Payment recorded' });
     } catch (err) {
         res.status(500).json({ error: err.message });

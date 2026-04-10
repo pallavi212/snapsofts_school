@@ -124,10 +124,10 @@ const Login = () => {
           {[
             { role: 'Principal', email: 'principal@edusync.edu', pass: '1' },
             { role: 'Admin', email: 'admin@edusync.edu', pass: '1' },
-            { role: 'Teacher', email: 'santosh.teacher@gmail.com', pass: '1' },
+            { role: 'Teacher', email: 'r.mehra@edusync.edu', pass: '1' },
             { role: 'Accountant', email: 'accounts@edusync.edu', pass: '1' },
-            { role: 'Parent', email: 'dhondiram@gmail.com', pass: '1' },
-            { role: 'Student', email: 'aditi@gmail.com', pass: '123456' },
+            { role: 'Parent', email: 'parent1@edusync.edu', pass: '1' },
+            { role: 'Student', email: 'aarav@edusync.edu', pass: '1' },
           ].map(c => (
             <div key={c.role}
               onClick={() => { setSelectedRole(c.role); setEmail(c.email); setPassword(c.pass); setError(''); }}

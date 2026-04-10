@@ -1,0 +1,113 @@
+/**
+ * Shared validation rules used across frontend forms.
+ * Same rules are mirrored in backend/utils/validators.js
+ */
+
+export const RULES = {
+    name: {
+        required: true,
+        pattern: /^[a-zA-Z\s]+$/,
+        min: 3,
+        max: 50,
+    },
+    email: {
+        required: true,
+        pattern: /^[a-zA-Z0-9._%+-]+@gmail\.com$/i,
+    },
+    phone: {
+        required: true,
+        pattern: /^\d{10}$/,
+    },
+    dob: {
+        required: true,
+        minAge: 3,
+        maxAge: 100,
+    },
+};
+
+/**
+ * Validate a name field.
+ * - Required, letters + spaces only, 3–50 chars
+ */
+export function validateName(value) {
+    const v = (value || '').trim();
+    if (!v) return 'Name is required';
+    if (!/^[a-zA-Z\s]+$/.test(v)) return 'Name can only contain letters and spaces';
+    if (v.length < 3) return 'Name must be at least 3 characters';
+    if (v.length > 50) return 'Name must be at most 50 characters';
+    return '';
+}
+
+/**
+ * Strict Gmail-only email validation.
+ *
+ * Rules enforced:
+ *  - Required (non-empty after trim)
+ *  - Exactly one @ symbol
+ *  - Username before @ must be at least 1 char: letters, digits, dots, underscores, hyphens, plus signs
+ *  - Domain must be exactly "gmail.com" — nothing more, nothing less
+ *  - Rejects: spaces, @gmail.com.com, multiple dots after @, other domains, missing username
+ *
+ * Valid:   example@gmail.com  |  user.name+tag@gmail.com
+ * Invalid: @gmail.com  |  user@gmail.com.com  |  user@yahoo.com  |  user @gmail.com
+ */
+export function validateEmail(value) {
+    const v = (value || '').trim();
+    if (!v) {
+        console.warn('[Validation] Email is empty');
+        return 'Email is required';
+    }
+    // Reject spaces anywhere (trim handles leading/trailing, this catches internal)
+    if (/\s/.test(v)) {
+        console.warn('[Validation] Email contains spaces:', v);
+        return 'Enter valid Gmail address (example@gmail.com)';
+    }
+    // Exactly one @ symbol
+    const atParts = v.split('@');
+    if (atParts.length !== 2) {
+        console.warn('[Validation] Email has wrong number of @ symbols:', v);
+        return 'Enter valid Gmail address (example@gmail.com)';
+    }
+    const [username, domain] = atParts;
+    // Username must be non-empty and contain only allowed chars
+    if (!username || !/^[a-zA-Z0-9._+%-]+$/.test(username)) {
+        console.warn('[Validation] Email username invalid:', v);
+        return 'Enter valid Gmail address (example@gmail.com)';
+    }
+    // Domain must be exactly "gmail.com" — case-insensitive, no extra segments
+    if (domain.toLowerCase() !== 'gmail.com') {
+        console.warn('[Validation] Email domain is not gmail.com:', v);
+        return 'Enter valid Gmail address (example@gmail.com)';
+    }
+    return '';
+}
+
+/**
+ * Validate a phone number.
+ * - Required, exactly 10 digits, no letters or symbols
+ */
+export function validatePhone(value) {
+    const v = (value || '').trim();
+    if (!v) return 'Phone number is required';
+    if (!/^\d+$/.test(v)) return 'Phone number must contain only digits';
+    if (v.length !== 10) return 'Phone number must be exactly 10 digits';
+    return '';
+}
+
+/**
+ * Validate a date of birth.
+ * - Required, valid date, not future, age 3–100
+ */
+export function validateDOB(value) {
+    if (!value) return 'Date of birth is required';
+    const dob = new Date(value);
+    if (isNaN(dob.getTime())) return 'Invalid date format';
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (dob > today) return 'Date of birth cannot be in the future';
+    const age = today.getFullYear() - dob.getFullYear() -
+        (today < new Date(today.getFullYear(), dob.getMonth(), dob.getDate()) ? 1 : 0);
+    if (age < 3) return 'Minimum age is 3 years';
+    if (age > 100) return 'Maximum age is 100 years';
+    return '';
+}

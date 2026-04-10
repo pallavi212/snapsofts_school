@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, X, User, Phone, Mail, BookOpen, Calendar, MapPin, FileText } from 'lucide-react';
 import { enquiryApi } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { validateName, validateEmail, validatePhone, validateDOB } from '../utils/validators';
 
 const STATUS_COLORS = {
     'New': { bg: 'hsla(221,83%,53%,0.12)', color: 'hsl(221,83%,45%)' },
@@ -19,16 +20,18 @@ const EMPTY = {
     previous_school: '', address: '', status: 'New', notes: '', follow_up_date: '',
 };
 
-const Field = ({ label, icon, children }) => (
+const Field = ({ label, icon, error, children }) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
         <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>{icon}{label}</label>
         {children}
+        {error && <span style={{ fontSize: '0.72rem', color: 'var(--danger)' }}>{error}</span>}
     </div>
 );
 
 const EnquiryModal = ({ initial, onClose, onSave }) => {
     const isEdit = !!initial;
     const [form, setForm] = useState(initial ? { ...EMPTY, ...initial } : EMPTY);
+    const [errors, setErrors] = useState({});
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -37,12 +40,39 @@ const EnquiryModal = ({ initial, onClose, onSave }) => {
         return () => { document.body.style.overflow = prev; };
     }, []);
 
-    const set = (f, v) => setForm(p => ({ ...p, [f]: v }));
+    const set = (f, v) => { setForm(p => ({ ...p, [f]: v })); setErrors(p => ({ ...p, [f]: '' })); };
 
-    const inp = { width: '100%', padding: '0.55rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: 'var(--bg-main)', color: 'var(--text-primary)', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' };
+    const inp = (field) => ({
+        width: '100%', padding: '0.55rem 0.75rem', borderRadius: 'var(--radius-md)',
+        border: `1px solid ${errors[field] ? 'var(--danger)' : 'var(--border-color)'}`,
+        background: 'var(--bg-main)', color: 'var(--text-primary)', fontSize: '0.875rem',
+        outline: 'none', boxSizing: 'border-box',
+    });
+
+    const validate = () => {
+        const e = {};
+        const nameErr = validateName(form.parent_name);
+        if (nameErr) e.parent_name = nameErr;
+        const phoneErr = validatePhone(form.phone);
+        if (phoneErr) e.phone = phoneErr;
+        if (form.email) {
+            const emailErr = validateEmail(form.email);
+            if (emailErr) e.email = emailErr;
+        }
+        const studentNameErr = validateName(form.student_name);
+        if (studentNameErr) e.student_name = studentNameErr;
+        if (form.dob) {
+            const dobErr = validateDOB(form.dob);
+            if (dobErr) e.dob = dobErr;
+        }
+        if (Object.keys(e).length) console.warn('[Validation] Enquiry form errors:', e);
+        return e;
+    };
 
     const handleSubmit = async e => {
         e.preventDefault();
+        const errs = validate();
+        if (Object.keys(errs).length) { setErrors(errs); return; }
         setSaving(true);
         try { await onSave(form); } finally { setSaving(false); }
     };
@@ -72,67 +102,75 @@ const EnquiryModal = ({ initial, onClose, onSave }) => {
                             {/* Parent info */}
                             <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Parent / Guardian</div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                                <Field label="Parent Name" icon={<User size={12} />}>
-                                    <input required style={inp} value={form.parent_name} onChange={e => set('parent_name', e.target.value)} placeholder="e.g. Ramesh Verma" />
+                                <Field label="Parent Name" icon={<User size={12} />} error={errors.parent_name}>
+                                    <input required style={inp('parent_name')} value={form.parent_name} onChange={e => set('parent_name', e.target.value)} placeholder="e.g. Ramesh Verma" />
                                 </Field>
-                                <Field label="Phone" icon={<Phone size={12} />}>
-                                    <input required style={inp} value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="+91 XXXXX XXXXX" />
+                                <Field label="Phone" icon={<Phone size={12} />} error={errors.phone}>
+                                    <input
+                                        required
+                                        style={inp('phone')}
+                                        value={form.phone}
+                                        inputMode="numeric"
+                                        maxLength={10}
+                                        onChange={e => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                        placeholder="10-digit mobile number"
+                                    />
                                 </Field>
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                                <Field label="Email (optional)" icon={<Mail size={12} />}>
-                                    <input type="email" style={inp} value={form.email} onChange={e => set('email', e.target.value)} placeholder="parent@email.com" />
+                                <Field label="Email (optional)" icon={<Mail size={12} />} error={errors.email}>
+                                    <input type="email" style={inp('email')} value={form.email} onChange={e => set('email', e.target.value)} placeholder="parent@gmail.com" />
                                 </Field>
                                 <Field label="Address" icon={<MapPin size={12} />}>
-                                    <input style={inp} value={form.address} onChange={e => set('address', e.target.value)} placeholder="Area, City" />
+                                    <input style={inp('address')} value={form.address} onChange={e => set('address', e.target.value)} placeholder="Area, City" />
                                 </Field>
                             </div>
 
                             {/* Student info */}
                             <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '0.25rem' }}>Student Details</div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                                <Field label="Student Name" icon={<User size={12} />}>
-                                    <input required style={inp} value={form.student_name} onChange={e => set('student_name', e.target.value)} placeholder="e.g. Arjun Verma" />
+                                <Field label="Student Name" icon={<User size={12} />} error={errors.student_name}>
+                                    <input required style={inp('student_name')} value={form.student_name} onChange={e => set('student_name', e.target.value)} placeholder="e.g. Arjun Verma" />
                                 </Field>
-                                <Field label="Date of Birth" icon={<Calendar size={12} />}>
-                                    <input type="date" style={inp} value={form.dob} onChange={e => set('dob', e.target.value)} />
+                                <Field label="Date of Birth" icon={<Calendar size={12} />} error={errors.dob}>
+                                    <input type="date" style={inp('dob')} value={form.dob} onChange={e => set('dob', e.target.value)} />
                                 </Field>
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
                                 <Field label="Gender">
-                                    <select style={inp} value={form.gender} onChange={e => set('gender', e.target.value)}>
+                                    <select style={inp('gender')} value={form.gender} onChange={e => set('gender', e.target.value)}>
                                         {['Male', 'Female', 'Other'].map(g => <option key={g}>{g}</option>)}
                                     </select>
                                 </Field>
                                 <Field label="Applying for Class">
-                                    <select style={inp} value={form.applying_for_grade} onChange={e => set('applying_for_grade', e.target.value)}>
+                                    <select style={inp('applying_for_grade')} value={form.applying_for_grade} onChange={e => set('applying_for_grade', e.target.value)}>
                                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(g => <option key={g} value={g}>Class {g}</option>)}
                                     </select>
                                 </Field>
                                 <Field label="Board Preference" icon={<BookOpen size={12} />}>
-                                    <select style={inp} value={form.board_preference} onChange={e => set('board_preference', e.target.value)}>
+                                    <select style={inp('board_preference')} value={form.board_preference} onChange={e => set('board_preference', e.target.value)}>
                                         {['Any', 'CBSE', 'SSC'].map(b => <option key={b}>{b}</option>)}
                                     </select>
                                 </Field>
                             </div>
                             <Field label="Previous School (optional)">
-                                <input style={inp} value={form.previous_school} onChange={e => set('previous_school', e.target.value)} placeholder="e.g. Sunrise Primary School" />
+                                <input style={inp('previous_school')} value={form.previous_school} onChange={e => set('previous_school', e.target.value)} placeholder="e.g. Sunrise Primary School" />
                             </Field>
 
                             {/* Follow-up */}
                             <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '0.25rem' }}>Follow-up</div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                                 <Field label="Status">
-                                    <select style={inp} value={form.status} onChange={e => set('status', e.target.value)}>
+                                    <select style={inp('status')} value={form.status} onChange={e => set('status', e.target.value)}>
                                         {STATUSES.map(s => <option key={s}>{s}</option>)}
                                     </select>
                                 </Field>
                                 <Field label="Follow-up Date" icon={<Calendar size={12} />}>
-                                    <input type="date" style={inp} value={form.follow_up_date || ''} onChange={e => set('follow_up_date', e.target.value)} />
+                                    <input type="date" style={inp('follow_up_date')} value={form.follow_up_date || ''} onChange={e => set('follow_up_date', e.target.value)} />
                                 </Field>
                             </div>
                             <Field label="Notes">
-                                <textarea style={{ ...inp, resize: 'vertical', minHeight: '70px' }} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Any remarks..." />
+                                <textarea style={{ ...inp('notes'), resize: 'vertical', minHeight: '70px' }} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Any remarks..." />
                             </Field>
                         </div>
 

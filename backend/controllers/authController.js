@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/UserModel');
 const db = require('../db');
+const ActivityLogModel = require('../models/ActivityLogModel');
 
 // Register API
 const register = async (req, res) => {
@@ -79,6 +80,12 @@ const login = async (req, res) => {
                 email: user.email,
                 role: user.role
             }
+        });
+
+        // Log the login event (fire-and-forget)
+        ActivityLogModel.log({
+            user_id: user.id, user_name: user.name, role: user.role,
+            action: 'LOGIN', module: 'Auth', details: `Logged in as ${user.role}`,
         });
     } catch (err) {
         res.status(500).json({ error: err.message });

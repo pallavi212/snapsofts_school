@@ -1,4 +1,6 @@
 const StudentModel = require('../models/StudentModel');
+const { logActivity } = require('../middleware/activityLogger');
+const { validateCommonFields } = require('../utils/validators');
 
 const getStudents = async (req, res) => {
     try {
@@ -19,8 +21,18 @@ const getCountByClass = async (req, res) => {
 };
 
 const createStudent = async (req, res) => {
+    const errors = validateCommonFields({
+        name: req.body.name,
+        phone: req.body.phone || req.body.contact,
+        dob: req.body.dob,
+    });
+    if (Object.keys(errors).length) {
+        console.warn('[Validation] createStudent errors:', errors);
+        return res.status(422).json({ errors });
+    }
     try {
         const result = await StudentModel.create(req.body);
+        logActivity(req, { action: 'CREATE', module: 'Students', details: `Admitted student ${req.body.name} to class ${req.body.class || ''}${req.body.section || ''}` });
         res.status(201).json(result);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -28,8 +40,18 @@ const createStudent = async (req, res) => {
 };
 
 const updateStudent = async (req, res) => {
+    const errors = validateCommonFields({
+        name: req.body.name,
+        phone: req.body.phone || req.body.contact,
+        dob: req.body.dob,
+    });
+    if (Object.keys(errors).length) {
+        console.warn('[Validation] updateStudent errors:', errors);
+        return res.status(422).json({ errors });
+    }
     try {
         await StudentModel.update(req.params.id, req.body);
+        logActivity(req, { action: 'UPDATE', module: 'Students', details: `Updated student ${req.params.id}` });
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });

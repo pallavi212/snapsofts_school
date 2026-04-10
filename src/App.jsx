@@ -17,6 +17,8 @@ import Settings from './pages/Settings';
 import LetterheadPreview from './pages/LetterheadPreview';
 import Admissions from './pages/Admissions';
 import PettyCash from './pages/PettyCash';
+import TeachingPlans from './pages/TeachingPlans';
+import ActivityLog from './pages/ActivityLog';
 
 import StudentDashboard from './pages/StudentDashboard';
 // Smart home route — parents see their own dashboard
@@ -50,6 +52,8 @@ function App() {
               <Route path="letterhead" element={<LetterheadPreview />} />
               <Route path="admissions" element={<Admissions />} />
               <Route path="petty-cash" element={<PettyCash />} />
+              <Route path="teaching-plans" element={<TeachingPlans />} />
+              <Route path="activity-log" element={<ActivityLog />} />
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>

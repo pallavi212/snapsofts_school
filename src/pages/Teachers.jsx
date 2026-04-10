@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit2, Mail, Phone, X, User, BookOpen, Clock, AtSign, PhoneCall, GraduationCap } from 'lucide-react';
 import { teacherApi } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { validateName, validateEmail, validatePhone } from '../utils/validators';
 
 const SUBJECTS = ['Mathematics', 'Science', 'English', 'Hindi', 'Computer Science', 'History', 'Geography', 'Physics', 'Chemistry', 'Biology'];
 const EXPERIENCES = ['< 1 Year', '1 Year', '2 Years', '3 Years', '5 Years', '8 Years', '10+ Years', '15+ Years', '20+ Years'];
@@ -35,12 +36,15 @@ const TeacherModal = ({ initial, onClose, onSave }) => {
 
   const validate = () => {
     const e = {};
-    if (!form.name.trim()) e.name = 'Name is required';
-    if (!form.email.trim()) e.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email';
-    if (!form.phone.trim()) e.phone = 'Phone is required';
+    const nameErr = validateName(form.name);
+    if (nameErr) e.name = nameErr;
+    const emailErr = validateEmail(form.email);
+    if (emailErr) e.email = emailErr;
+    const phoneErr = validatePhone(form.phone);
+    if (phoneErr) e.phone = phoneErr;
     if (!form.qualification.trim()) e.qualification = 'Qualification is required';
     if (form.classes.length === 0) e.classes = 'Select at least one class';
+    if (Object.keys(e).length) console.warn('[Validation] Teacher form errors:', e);
     return e;
   };
 
@@ -105,7 +109,16 @@ const TeacherModal = ({ initial, onClose, onSave }) => {
             </div>
             <div className="form-group" style={{ margin: 0 }}>
               <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><PhoneCall size={13} /> Phone</label>
-              <input type="text" className="form-control" placeholder="+91 XXXXX XXXXX" value={form.phone} onChange={e => set('phone', e.target.value)} style={{ borderColor: errors.phone ? 'var(--danger)' : '' }} />
+              <input
+                type="text"
+                className="form-control"
+                placeholder="10-digit mobile number"
+                value={form.phone}
+                inputMode="numeric"
+                maxLength={10}
+                onChange={e => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                style={{ borderColor: errors.phone ? 'var(--danger)' : '' }}
+              />
               {errors.phone && <p style={{ color: 'var(--danger)', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.phone}</p>}
             </div>
           </div>

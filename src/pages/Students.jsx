@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Plus, Filter, Edit2, Trash2, X, Users, GraduationCap, User, Phone, Calendar, BookOpen, Shield, Link2, CheckCircle } from 'lucide-react';
 import { studentApi, userApi } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { validateName, validateDOB, validatePhone } from '../utils/validators';
 
 const EMPTY_FORM = {
   name: '', board: 'CBSE', class: '10', section: 'A',
@@ -148,16 +149,21 @@ const StudentModal = ({ initial, onClose, onSave }) => {
 
   const validateStep1 = () => {
     const e = {};
-    if (!form.name.trim()) e.name = 'Required';
-    if (!form.dob) e.dob = 'Required';
+    const nameErr = validateName(form.name);
+    if (nameErr) e.name = nameErr;
+    const dobErr = validateDOB(form.dob);
+    if (dobErr) e.dob = dobErr;
+    if (Object.keys(e).length) console.warn('[Validation] Step 1 errors:', e);
     return e;
   };
 
   const validateStep2 = () => {
     const e = {};
-    if (!form.parent.trim()) e.parent = 'Required';
-    if (!form.contact.trim()) e.contact = 'Required';
-    else if (!/^\+?[\d\s-]{8,}$/.test(form.contact)) e.contact = 'Invalid number';
+    const parentErr = validateName(form.parent);
+    if (parentErr) e.parent = parentErr;
+    const phoneErr = validatePhone(form.contact);
+    if (phoneErr) e.contact = phoneErr;
+    if (Object.keys(e).length) console.warn('[Validation] Step 2 errors:', e);
     return e;
   };
 
@@ -280,7 +286,14 @@ const StudentModal = ({ initial, onClose, onSave }) => {
                     </select>
                   </Field>
                   <Field label="Contact Number" icon={<Phone size={12} />} error={errors.contact}>
-                    <input style={inp('contact')} placeholder="+91 XXXXX XXXXX" value={form.contact} onChange={e => set('contact', e.target.value)} />
+                    <input
+                      style={inp('contact')}
+                      placeholder="10-digit mobile number"
+                      value={form.contact}
+                      inputMode="numeric"
+                      maxLength={10}
+                      onChange={e => set('contact', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    />
                   </Field>
                 </div>
                 <Field label="Parent Email (optional)">
